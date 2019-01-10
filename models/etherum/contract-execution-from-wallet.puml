@@ -1,0 +1,47 @@
+@startuml
+actor Alice
+boundary Browser
+control MetaMask
+entity InfuraGethNode #aqua
+entity GethNode1 #aqua
+entity ParityNode1 #aqua
+entity GethMiningNode1 #blue
+    note over GethMiningNode1
+    This is the miner who solves the
+    puzzle first and will create a block
+    end note
+entity EtherscanGethNode1 #aqua
+Alice -> Browser: inputData
+Alice -> Browser: submit
+    Browser -> MetaMask: voteForCandidat(inp)
+        MetaMask -> MetaMask: prepareTxn(inp):txn
+            note right
+            Transaction input contains
+            - Nonce (unique sequence nr)
+            - ReceivingContractAddress
+            - MethodToBeExecuted
+            - GasLimit
+            - SenderAddress
+            end note
+        MetaMask -> MetaMask: sign(txn,prKey):stxn
+            note right
+            The transaction will be signed
+            and serialized
+            end note
+        MetaMask -> InfuraGethNode: send(txn):trxId
+        MetaMask <-- InfuraGethNode: trxId
+        Browser <-- MetaMask: trxId
+            note right
+            Transaction Id (trxId) can be used for
+            lookup, e.g. via Etherscan node
+            end note
+            InfuraGethNode -> GethNode1: send(stxn)
+            GethNode1 ->  GethMiningNode1: sent(stxn)
+            GethMiningNode1 -> GethMiningNode1: addToTrxPool(stxn)
+            InfuraGethNode -> ParityNode1: send(stxn)
+            ParityNode1 -> EtherscanGethNode1: send(stxn)
+            GethMiningNode1 -> GethMiningNode1: selectTxns():txn[]
+            GethMiningNode1 -> GethMiningNode1: validateTxns(txn[])
+            GethMiningNode1 -> GethMiningNode1: solvePuzzle(): sol
+            GethMiningNode1 -> GethMiningNode1: createBlock(txn[],sol)
+@enduml
