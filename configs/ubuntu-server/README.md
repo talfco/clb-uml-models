@@ -29,6 +29,7 @@
     ... storage: enabled
     
     $ kubectl get storageclass
+    
     NAME                          PROVISIONER            AGE
     microk8s-hostpath (default)   microk8s.io/hostpath   57m
 
@@ -79,13 +80,16 @@
 
 
      $ kubectl create -f ~/kubernetes/physicalVolume1.yaml
+     
      persistentvolume/pv0001 created
      
      $ kubectl get pv
+     
      NAME     CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE
      pv0001   50Gi       RWO            Retain           Available                                   107s
      
      $ kubectl describe pv
+     
        Name:            pv0001
        Labels:          type=local
        Annotations:     kubectl.kubernetes.io/last-applied-configuration:
@@ -114,6 +118,7 @@
 
 
     $ microk8s.enable registry
+    
     Enabling the private registry
     Enabling default storage class
     deployment.extensions/hostpath-provisioner unchanged
@@ -131,6 +136,7 @@
 
 
     $ kubectl get pv
+    
     NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM                               STORAGECLASS        REASON   AGE
     pv0001                                     50Gi       RWO            Retain           Available                                       microk8s-hostpath            117m
     pvc-f4cb680b-165c-11e9-ad63-10bf48e10813   20Gi       RWX            Delete           Bound       container-registry/registry-claim   microk8s-hostpath            2m30s
