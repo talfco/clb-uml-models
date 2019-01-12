@@ -28,7 +28,7 @@
     
     ... storage: enabled
     
-    > kubectl get storageclass
+    $ kubectl get storageclass
     NAME                          PROVISIONER            AGE
     microk8s-hostpath (default)   microk8s.io/hostpath   57m
 
