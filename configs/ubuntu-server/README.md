@@ -10,7 +10,7 @@
 * Checking your admin setup 
 
 
-    > kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
+    $ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
 
 
 * https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
@@ -22,8 +22,9 @@
   local disk (`hostpath`).
 * By default this disk is part of the microk8s installation path. 
 
-    > microk8.enable storage
-    > microk8s.status
+
+    $ microk8.enable storage
+    $ microk8s.status
     
     ... storage: enabled
     
@@ -54,10 +55,9 @@
 * Create a local host directory for the new physical volume (pv)
 
 
-    > mkdir /media/disk1/microk8s-default-storageclass
+    $ mkdir /media/disk1/microk8s-default-storageclass
 
 * Create a persistentVolume.yaml. We will associate the default storage-class of microk8s to this new media: `storageClassName: microk8s-hostpath`
-
 
     kind: PersistentVolume
     apiVersion: v1
@@ -78,14 +78,14 @@
 * Run the `kubectl create` command, btw. in case you want to update a yaml confiugration run `kubectl apply`  
 
 
-     > kubectl create -f ~/kubernetes/physicalVolume1.yaml
+     $ kubectl create -f ~/kubernetes/physicalVolume1.yaml
      persistentvolume/pv0001 created
      
-     > kubectl get pv
+     $ kubectl get pv
      NAME     CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE
      pv0001   50Gi       RWO            Retain           Available                                   107s
      
-     > kubectl describe pv
+     $ kubectl describe pv
        Name:            pv0001
        Labels:          type=local
        Annotations:     kubectl.kubernetes.io/last-applied-configuration:
@@ -113,7 +113,7 @@
 * Which will create its repository using the default storage class for storage claims which maps to our physical volume
 
 
-    > microk8s.enable registry
+    $ microk8s.enable registry
     Enabling the private registry
     Enabling default storage class
     deployment.extensions/hostpath-provisioner unchanged
@@ -130,7 +130,7 @@
 * The registry claims some disk space for it's registry `persistentvolumeclaim/registry-claim`.
 
 
-    > kubectl get pv
+    $ kubectl get pv
     NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM                               STORAGECLASS        REASON   AGE
     pv0001                                     50Gi       RWO            Retain           Available                                       microk8s-hostpath            117m
     pvc-f4cb680b-165c-11e9-ad63-10bf48e10813   20Gi       RWX            Delete           Bound       container-registry/registry-claim   microk8s-hostpath            2m30s
