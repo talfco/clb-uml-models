@@ -1,7 +1,9 @@
 @startuml
 actor Alice
+
 boundary Browser
 control MetaMask
+
 entity InfuraGethNode #aqua
 entity GethNode1 #aqua
 entity ParityNode1 #aqua
@@ -11,6 +13,8 @@ entity GethMiningNode1 #blue
     puzzle first and will create a block
     end note
 entity EtherscanGethNode1 #aqua
+entity GethMiningNode2 #blue
+
 Alice -> Browser: inputData
 Alice -> Browser: submit
     Browser -> MetaMask: voteForCandidat(inp)
