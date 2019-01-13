@@ -1,4 +1,5 @@
 @startuml
+
 actor Alice
 
 boundary Browser
@@ -12,20 +13,25 @@ entity GethMiningNode1 #blue
     This is the miner who solves the
     puzzle first and will create a block
     end note
-entity EtherscanGethNode1 #aqua
+entity EtherscanNode1 #aqua
 entity GethMiningNode2 #blue
 
+== Phase: Transaction Preparation ==
+autonumber 10 10 "[000]"
 Alice -> Browser: inputData
 Alice -> Browser: submit
     Browser -> MetaMask: voteForCandidat(inp)
-        MetaMask -> MetaMask: prepareTxn(inp):txn
+
+
+        MetaMask -> MetaMask: createRawTxnObj(inp):txn
             note right
             Transaction input contains
-            - Nonce (unique sequence nr)
-            - ReceivingContractAddress
-            - MethodToBeExecuted
-            - GasLimit
-            - SenderAddress
+            - nonce (unique sequence nr)
+            - rcvContractAddr
+            - gasPrice
+            - gasLimit
+            - value
+            - data (funcSignature, Parameters)
             end note
         MetaMask -> MetaMask: sign(txn,prKey):stxn
             note right
@@ -33,19 +39,81 @@ Alice -> Browser: submit
             and serialized
             end note
         MetaMask -> InfuraGethNode: send(txn):trxId
+
+        InfuraGethNode -> InfuraGethNode: validateTxn(txn)
+            note right
+            checking the digital signature is consistent
+            with the sender address and the trx content,
+            that the sender has enough ether to fund the
+            full trx processing and the data submitted
+            will not cause the Vote function to fail.
+            end note
         MetaMask <-- InfuraGethNode: trxId
         Browser <-- MetaMask: trxId
             note right
             Transaction Id (trxId) can be used for
-            lookup, e.g. via Etherscan node
+            lookup, e.g. via a Etherscan node
             end note
+
+            == Phase: Transaction Broadcast ==
             InfuraGethNode -> GethNode1: send(stxn)
-            GethNode1 ->  GethMiningNode1: sent(stxn)
-            GethMiningNode1 -> GethMiningNode1: addToTrxPool(stxn)
+            GethNode1 -> GethNode1: validateTxn(txn)
+            GethNode1 ->  GethMiningNode1: send(stxn)
+            GethMiningNode1 -> GethMiningNode1: validateTxn(stxn)
             InfuraGethNode -> ParityNode1: send(stxn)
-            ParityNode1 -> EtherscanGethNode1: send(stxn)
-            GethMiningNode1 -> GethMiningNode1: selectTxns():txn[]
-            GethMiningNode1 -> GethMiningNode1: validateTxns(txn[])
-            GethMiningNode1 -> GethMiningNode1: solvePuzzle(): sol
-            GethMiningNode1 -> GethMiningNode1: createBlock(txn[],sol)
+            ParityNode1 -> ParityNode1: validateTxn(txn)
+            ParityNode1 -> EtherscanNode1: send(stxn)
+            EtherscanNode1 -> EtherscanNode1: validateTxn(stxn)
+            GethMiningNode1 -> GethMiningNode2: send(stxn)
+            GethMiningNode2 -> GethMiningNode2: validateTxn(stxn)
+            GethMiningNode2 -> GethMiningNode2: skipProcessing(stxn)
+                note left
+                Mining Node will not process due
+                to its own trx processing rules
+                (e.g. gasPrice too low)
+                end note
+
+            == Phase: PoW Consensus ==
+            GethMiningNode1 -> GethMiningNode1: validateTxn(stxn)
+            GethMiningNode1 -> GethMiningNode1: addToTrxPool(stxn)
+                note right
+                Each <b>mining</b> node which  accepts the trx
+                will execute the contract state change function
+                and tries to solve the puzzle for reward
+                end note
+            GethMiningNode1 -> GethMiningNode1: selectTxnsForBlock():stxn[]
+            GethMiningNode1 -> GethMiningNode1: executeTxns(stxn[])
+            GethMiningNode1 -> GethMiningNode1: persistNewBlock(stxn[]):block
+            GethMiningNode1 -> GethMiningNode1: solvePuzzle(block): hash
+
+            == Phase: Block Creation ==
+            GethMiningNode1 -> GethMiningNode1: claimReward(): ether
+            GethMiningNode1 -> GethMiningNode1: createBlock(txn[],hash): block
+            GethMiningNode1 -> GethMiningNode1: syncBlockLocally(block)
+
+            == Phase: Block Broadcast ==
+            GethMiningNode1 -> EtherscanNode1: send(block)
+            ref over EtherscanNode1: Block Processing
+            GethMiningNode1 -> GethNode1: send(block)
+            ref over GethNode1: Block Processing
+            GethMiningNode1 -> ParityNode1 : send(block)
+            ref over ParityNode1: Block Processing
+            GethNode1 -> InfuraGethNode : send(block)
+            ref over InfuraGethNode: Block Processing
+            InfuraGethNode -> MetaMask: completenEvent(voteConfirmation)
+            MetaMask -> Browser: notify()
+            Browser -> Alice: notify()
+
+            == Phase: Block Processing ==
+            EtherscanNode1 -> EtherscanNode1: validateBlock(block)
+                note left
+                Each node receiving the block will
+                validate it, send it to its peer and
+                persist the block int is local chain
+                end note
+            EtherscanNode1 -> GethMiningNode2: send(block)
+            ref over GethMiningNode2: Block Processing
+            EtherscanNode1 -> EtherscanNode1: syncBlockLocally(block)
+autonumber stop
+
 @enduml
