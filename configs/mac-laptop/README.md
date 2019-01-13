@@ -7,8 +7,8 @@
 
 
       $ git clone https://github.com/dockersamples/k8s-wordsmith-demo.git
-      cd k8s-wordsmith-demo
-      docker-compose build  
+      $ cd k8s-wordsmith-demo
+      $ docker-compose build  
        
          ...
          Successfully tagged dockersamples/k8s-wordsmith-web:latest
@@ -49,7 +49,7 @@
    stack by running `docker stack deploy -c ./docker-compose.yml words`
    
    
-    $ kubectl get ns
+      $ kubectl get ns
      
        NAME          STATUS    AGE
        default       Active    1h
@@ -57,13 +57,13 @@
        kube-public   Active    1h
        kube-system   Active    1h
 
-    $ kubectl get -n default  deploy
+      $ kubectl get -n default  deploy
     
         NAME      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
         db        1         1         1            1           34m
         web       1         1         1            1           34m
         words     5         5         5            5           34m
         
-    $  kubectl delete deployment db -n default
-    $  kubectl delete deployment web -n default
-    $  kubectl delete deployment words -n default
+      $  kubectl delete deployment db -n default
+      $  kubectl delete deployment web -n default
+      $  kubectl delete deployment words -n default
