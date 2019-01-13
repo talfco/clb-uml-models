@@ -23,10 +23,10 @@
         * **deployments**: `deploy` which is made up of
             * **replica-sets**: `ns` which controls the 
                 * **pods** executing a docker image.
-  
-
-
+* Commands
+                                                      
       $ kb get ns
+    
     
         NAME                 STATUS   AGE
         container-registry   Active   6h28m
@@ -41,7 +41,7 @@
         hostpath-provisioner             1/1     1            1           34h
         kubernetes-dashboard             1/1     1            1           2d
         monitoring-influxdb-grafana-v4   1/1     1            1           2d
-  
+      
       $ kb get --namespace=container-registry deploy
     
         NAME       READY   UP-TO-DATE   AVAILABLE   AGE
@@ -111,29 +111,30 @@
           ----     ------             ----                  ----                 -------
           Warning  MissingClusterDNS  3s (x329 over 6h51m)  kubelet, cloudburo1  pod: "registry-7fc4594d64-5gg2d_container-registry(f4d04d09-165c-11e9-ad63-10bf48e10813)". kubelet does not have ClusterDNS IP configured and cannot create Pod using "ClusterFirst" policy. Falling back to "Default" policy.
 
+
 * `registry-data` of the POD is of type `PersistentVolumeClaim` with the `ClaimName: registry-claim`
 
 
-    $ kb describe --namespace=container-registry  pvc
+      $ kb describe --namespace=container-registry  pvc
     
-    Name:          registry-claim
-    Namespace:     container-registry
-    StorageClass:  microk8s-hostpath
-    Status:        Bound
-    Volume:        pvc-f4cb680b-165c-11e9-ad63-10bf48e10813
-    Labels:        <none>
-    Annotations:   control-plane.alpha.kubernetes.io/leader:
-                     {"holderIdentity":"b502cd6b-1646-11e9-bf54-3eb4d231b7f7","leaseDurationSeconds":15,"acquireTime":"2019-01-12T11:26:51Z","renewTime":"2019-...
-                   kubectl.kubernetes.io/last-applied-configuration:
-                     {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{},"name":"registry-claim","namespace":"container-registry"},"...
-                   pv.kubernetes.io/bind-completed: yes
-                   pv.kubernetes.io/bound-by-controller: yes
-    Finalizers:    [kubernetes.io/pvc-protection]
-    Capacity:      20Gi
-    Access Modes:  RWX
-    VolumeMode:    Filesystem
-    Events:        <none>
-    Mounted By:    registry-7fc4594d64-5gg2d
+          Name:          registry-claim
+          Namespace:     container-registry
+          StorageClass:  microk8s-hostpath
+          Status:        Bound
+          Volume:        pvc-f4cb680b-165c-11e9-ad63-10bf48e10813
+          Labels:        <none>
+          Annotations:   control-plane.alpha.kubernetes.io/leader:
+                           {"holderIdentity":"b502cd6b-1646-11e9-bf54-3eb4d231b7f7","leaseDurationSeconds":15,"acquireTime":"2019-01-12T11:26:51Z","renewTime":"2019-...
+                         kubectl.kubernetes.io/last-applied-configuration:
+                           {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{},"name":"registry-claim","namespace":"container-registry"},"...
+                         pv.kubernetes.io/bind-completed: yes
+                         pv.kubernetes.io/bound-by-controller: yes
+          Finalizers:    [kubernetes.io/pvc-protection]
+          Capacity:      20Gi
+          Access Modes:  RWX
+          VolumeMode:    Filesystem
+          Events:        <none>
+          Mounted By:    registry-7fc4594d64-5gg2d
 
 
 ## Enable Storage 
@@ -142,16 +143,15 @@
   local disk (`hostpath`).
 * By default this disk is part of the microk8s installation path. 
 
+      $ microk8.enable storage
+      $ microk8s.status
 
-    $ microk8.enable storage
-    $ microk8s.status
-    
-    ... storage: enabled
-    
-    $ kubectl get storageclass
-    
-    NAME                          PROVISIONER            AGE
-    microk8s-hostpath (default)   microk8s.io/hostpath   57m
+          ... storage: enabled
+
+          $ kubectl get storageclass
+
+          NAME                          PROVISIONER            AGE
+          microk8s-hostpath (default)   microk8s.io/hostpath   57m
 
 
 * A`StorageClass` provides a way for administrators to describe the “classes” of storage they offer. 
@@ -175,60 +175,59 @@
 
 * Create a local host directory for the new physical volume (pv)
 
-
-    $ mkdir /media/disk1/microk8s-default-storageclass
+      $ mkdir /media/disk1/microk8s-default-storageclass
 
 * Create a persistentVolume.yaml. We will associate the default storage-class of microk8s to this new media: `storageClassName: microk8s-hostpath`
 
-    kind: PersistentVolume
-    apiVersion: v1
-    metadata:
-      name: pv0001
-      labels:
-        type: local
-    spec:
-      capacity:
-        storage: 50Gi
-      accessModes:
-        - ReadWriteOnce
-      storageClassName: microk8s-hostpath
-      hostPath:
-        path: "/media/disk1/microk8s-pv1"
+          kind: PersistentVolume
+          apiVersion: v1
+          metadata:
+            name: pv0001
+            labels:
+              type: local
+          spec:
+            capacity:
+              storage: 50Gi
+            accessModes:
+              - ReadWriteOnce
+            storageClassName: microk8s-hostpath
+            hostPath:
+              path: "/media/disk1/microk8s-pv1"
         
 
 * Run the `kubectl create` command, btw. in case you want to update a yaml confiugration run `kubectl apply`  
 
 
-     $ kubectl create -f ~/kubernetes/physicalVolume1.yaml
+      $ kubectl create -f ~/kubernetes/physicalVolume1.yaml
      
-     persistentvolume/pv0001 created
+            persistentvolume/pv0001 created
      
-     $ kubectl get pv
+      $ kubectl get pv
      
-     NAME     CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE
-     pv0001   50Gi       RWO            Retain           Available                                   107s
+           NAME     CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE
+           pv0001   50Gi       RWO            Retain           Available                                   107s
      
-     $ kubectl describe pv
+      $ kubectl describe pv
      
-       Name:            pv0001
-       Labels:          type=local
-       Annotations:     kubectl.kubernetes.io/last-applied-configuration:
-                          {"apiVersion":"v1","kind":"PersistentVolume","metadata":{"annotations":{},"labels":{"type":"local"},"name":"pv0001"},"spec":{"accessModes"...
-       Finalizers:      [kubernetes.io/pv-protection]
-       StorageClass:    microk8s-hostpath
-       Status:          Available
-       Claim:           
-       Reclaim Policy:  Retain
-       Access Modes:    RWO
-       VolumeMode:      Filesystem
-       Capacity:        50Gi
-       Node Affinity:   <none>
-       Message:         
-       Source:
-           Type:          HostPath (bare host directory volume)
-           Path:          /media/disk1/microk8s-pv1
-           HostPathType:  
-       Events:            <none>
+             Name:            pv0001
+             Labels:          type=local
+             Annotations:     kubectl.kubernetes.io/last-applied-configuration:
+                                {"apiVersion":"v1","kind":"PersistentVolume","metadata":{"annotations":{},"labels":{"type":"local"},"name":"pv0001"},"spec":{"accessModes"...
+             Finalizers:      [kubernetes.io/pv-protection]
+             StorageClass:    microk8s-hostpath
+             Status:          Available
+             Claim:           
+             Reclaim Policy:  Retain
+             Access Modes:    RWO
+             VolumeMode:      Filesystem
+             Capacity:        50Gi
+             Node Affinity:   <none>
+             Message:         
+             Source:
+                 Type:          HostPath (bare host directory volume)
+                 Path:          /media/disk1/microk8s-pv1
+                 HostPathType:  
+             Events:            <none>
 
 
 ## Enable the Docker Registry
@@ -237,29 +236,29 @@
 * Which will create its repository using the default storage class for storage claims which maps to our physical volume
 
 
-    $ microk8s.enable registry
+      $ microk8s.enable registry
     
-    Enabling the private registry
-    Enabling default storage class
-    deployment.extensions/hostpath-provisioner unchanged
-    storageclass.storage.k8s.io/microk8s-hostpath unchanged
-    Storage will be available soon
-    Applying registry manifest
-    namespace/container-registry created
-    persistentvolumeclaim/registry-claim created
-    deployment.extensions/registry created
-    service/registry created
-    The registry is enabled
+          Enabling the private registry
+          Enabling default storage class
+          deployment.extensions/hostpath-provisioner unchanged
+          storageclass.storage.k8s.io/microk8s-hostpath unchanged
+          Storage will be available soon
+          Applying registry manifest
+          namespace/container-registry created
+          persistentvolumeclaim/registry-claim created
+          deployment.extensions/registry created
+          service/registry created
+          The registry is enabled
 
 
 * The registry claims some disk space for it's registry `persistentvolumeclaim/registry-claim`.
 
 
-    $ kubectl get pv
+      $ kubectl get pv
     
-    NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM                               STORAGECLASS        REASON   AGE
-    pv0001                                     50Gi       RWO            Retain           Available                                       microk8s-hostpath            117m
-    pvc-f4cb680b-165c-11e9-ad63-10bf48e10813   20Gi       RWX            Delete           Bound       container-registry/registry-claim   microk8s-hostpath            2m30s
+          NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM                               STORAGECLASS        REASON   AGE
+          pv0001                                     50Gi       RWO            Retain           Available                                       microk8s-hostpath            117m
+          pvc-f4cb680b-165c-11e9-ad63-10bf48e10813   20Gi       RWX            Delete           Bound       container-registry/registry-claim   microk8s-hostpath            2m30s
 
 
 * Pods access storage by using the claim as a volume. Claims must exist in the same namespace as the pod using the claim. 
