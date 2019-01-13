@@ -6,7 +6,7 @@
 * https://blog.docker.com/2018/07/kubernetes-is-now-available-in-docker-desktop-stable-channel/
 
 
-     & git clone https://github.com/dockersamples/k8s-wordsmith-demo.git
+      git clone https://github.com/dockersamples/k8s-wordsmith-demo.git
      cd k8s-wordsmith-demo
      docker-compose build  
         
