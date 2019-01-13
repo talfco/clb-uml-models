@@ -1,0 +1,27 @@
+@startuml
+title
+hostpath provisioner
+
+end title
+package deployment.hostpath-provisioner {
+    package replicatset.hostpath-provisioner {
+        node pot.hostpath-provisioner {
+            [component docker.image]
+            note right
+                pv_dir points to
+                $snap_common/default_storage
+            end note
+        }
+    }
+    }
+note right
+hostpath provisioner reads from the kubernetes API,
+and watches for you to create a storage class
+and a persistentvolume claim,
+When those exist, the provisioner  will go an execute
+a mkdir to create the hostpath.
+end note
+
+
+
+@enduml
