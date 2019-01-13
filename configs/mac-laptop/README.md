@@ -13,7 +13,7 @@
          ...
          Successfully tagged dockersamples/k8s-wordsmith-web:latest
      
-       $ kubectl apply -f kube-deployment.yml
+      $ kubectl apply -f kube-deployment.yml
      
          service "db" created
          deployment.apps "db" created
@@ -22,7 +22,7 @@
          service "web" created
          deployment.apps "web" created
      
-       $ kubectl get pods
+      $ kubectl get pods
      
          NAME                     READY     STATUS    RESTARTS   AGE
          db-6d46b7775-dn8mn       1/1       Running   0          4m
@@ -33,7 +33,7 @@
          words-55c744cc9d-pqnsf   1/1       Running   0          4m
          words-55c744cc9d-r5q8q   1/1       Running   0          4m
      
-       $ kubectl get svc
+      $ kubectl get svc
      
          NAME         TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
          db           ClusterIP      None             <none>        5432/TCP         5m
