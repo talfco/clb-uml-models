@@ -9,15 +9,15 @@ node DynamicCaseMgmVMNode2 {
 }
 
 node PresentationServiceVMNode1 {
-    () cg9REST_IF as cg9if #red
-    [CG9 - Partner Presentation Services] as cg9
-    cg9if -- cg9
+    () api1REST_IF as api1if #red
+    [API1 - Client Presentation Services] as api1
+    api1if -- api1
 }
 
 node PresentationServiceVMNode2 {
-    () kefREST_IF as kefif #red
-    [KEF - Partner Presentation Services] as kef
-    kefif -- kef
+    () api2REST_IF as api2if #red
+    [API2 - Account Presentation Services] as api2
+    api2if -- api2
 }
 
 node SagaExecutionVMNode {
@@ -63,8 +63,8 @@ node SagaExecutionVMNode {
 
 p21 ..> sagaif
 muy ..> sagaif
-cg9 ..> sagaif
-kef ..> sagaif
+api1 ..> sagaif
+api2 ..> sagaif
 
 node ActionExecutionControllerVMNode {
     () bdomREST_IF as bdomif #red
