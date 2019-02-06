@@ -1,0 +1,38 @@
+@startuml
+hide footbox
+title Oauth 2.0 Abstract protocol flow
+autonumber
+actor user as "resource owner (user)"
+box "token stays secure" #FAFAFA
+participant client as "client (application)"
+participant authorization as "authorization server"
+database resource as "resource server"
+end box
+
+group user authorizes client
+client -> user : request authorization
+note left
+**grant types**:
+# authorization code
+# implicit
+# password
+# client_credentials
+end note
+user --> client : authorization grant
+end
+
+group token is generated
+client -> authorization : request token\npresent authorization grant
+authorization --> client :var:  access token
+note left
+**response types**:
+# code
+# token
+end note
+end group
+
+group resource can be accessed
+client -> resource : request resource\npresent token
+resource --> client : resource
+end group
+@enduml

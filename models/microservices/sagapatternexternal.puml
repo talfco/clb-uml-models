@@ -1,11 +1,11 @@
 @startuml
 
 node DynamicCaseMgmtVMNode1 {
-    [P21 - CIC Onboarding] as p21
+    [Corporate Onboarding] as p21
 }
 
 node DynamicCaseMgmVMNode2 {
-    [MUY - WMO Onboarding] as muy
+    [Individual Onboarding] as muy
 }
 
 node PresentationServiceVMNode1 {
@@ -21,55 +21,55 @@ node PresentationServiceVMNode2 {
 }
 
 node SagaExecutionVMNode {
-    () bqnREST_IF as bqnif #red
-    note right of bqnif
+    () sagaREST_IF as sagaif #red
+    note right of sagaif
         Exposes on a per Saga Type a
         JSON Data Structure (versioned)
         Attribute types  can be mapped to the
-        BQN data dictionary. XSD definition which
+        SAGA data dictionary. XSD definition which
         is an extension of the OLB XSD definition
     end note
-    folder "BQN Case App" {
-        [ BQN - SagaExecutionController] as bqn
-        note right of bqn
+    folder "SAGA Case App" {
+        [ SAGA - ExecutionController] as saga
+        note right of saga
             Will contain encapsulated BPM Model per
             Saga Type. Responsible to build up the
             canonical runtime model and enrich it with
-            meta data (BQN. May validate the Saga Interface
+            meta data (SAGA. May validate the Saga Interface
             model to be compliant with XSD definitions
         end note
-        [ BQN-BPM1 - "CICOnboardingSaga" ] as bqa1
-        [ BQN-BPM2 - "WMOOnboardingSaga" ] as bqa2
-        [ BQN-BPM3 - "MBBOProductSalesSaga" ] as bqa3
-        [ BQN-Plugin - "NHYActionExecutor"] as plug
-        [ BQN-Plugin - "DMJDirectActionExecutor"] as plug1
+        [ SAGA-BPM1 - "CorporateOnboardingSaga" ] as bqa1
+        [ SAGA-BPM2 - "IndivdualOnboardingSaga" ] as bqa2
+        [ SAGA-BPM3 - "InvestmentProductSalesSaga" ] as bqa3
+        [ SAGA-Plugin - "BDOMActionExecutor"] as plug
+        [ SAGA-Plugin - "ATODirectActionExecutor"] as plug1
         database sagaState
-        bqn --> bqa1
-        bqn --> bqa2
-        bqn --> bqa3
-        bqn --> plug
-        bqn --> plug1
+        saga --> bqa1
+        saga --> bqa2
+        saga --> bqa3
+        saga --> plug
+        saga --> plug1
      }
-    bqnif -- bqn
-    sagaState - bqn
-    frame DMJLibrary as dml
+    sagaif -- saga
+    sagaState - saga
+    frame ATOLibrary as dml
     note left of dml
       read services to establish saga process context,
       dedicated service providers (e.g. OLB, DocumentBasket)
-      may be connected directly via DMJLibrary based DMActions.
+      may be connected directly via ATOLibrary based DMActions.
     end note
     plug1 --> dml
 }
 
-p21 ..> bqnif
-muy ..> bqnif
-cg9 ..> bqnif
-kef ..> bqnif
+p21 ..> sagaif
+muy ..> sagaif
+cg9 ..> sagaif
+kef ..> sagaif
 
 node ActionExecutionControllerVMNode {
-    () nhyREST_IF as nhyif #red
-    [NHY - BusinessDomainActionExecContr] as nhy
-    note left of nhy
+    () bdomREST_IF as bdomif #red
+    [BDOM - BusinessDomainActionExecContr] as bdom
+    note left of bdom
       Will load a list of versioned business
       domain actions delivered in versioned modules.
       And exposes a REST action executor interface.
@@ -78,10 +78,10 @@ node ActionExecutionControllerVMNode {
       May provide future support of sharding
       to partition along saga type collections.
     end note
-    nhyif -- nhy
-    folder "DMJ-Library" {
+    bdomif -- bdom
+    folder "ATO-Library" {
         () dmjLIB_IF as dmjif
-        [DMJ - BuisnessDomainActionFramework] as dmj
+        [ATO - BuisnessDomainActionFramework] as dmj
         note left of dmj
           Domain specific actions are encapsulated in
           well defined domain module scopes. Allowing
@@ -89,12 +89,12 @@ node ActionExecutionControllerVMNode {
           testing. Framework provides standardized Mockup
           support for automated testing.
         end note
-        nhy --> dmjif
+        bdom --> dmjif
         dmjif -- dmj
-        [DMJ-Partner-DActionsModule] as da1
-        [DMJ-Account-DActionsModule] as da2
-        [DMJ-Card-DActionsModule] as da3
-        [DMJ-Notifiation-DActionsModule] as da4
+        [ATO-Client-DActionsModule] as da1
+        [ATO-Account-DActionsModule] as da2
+        [ATO-Portfolio-DActionsModule] as da3
+        [ATO-Notifiation-DActionsModule] as da4
         dmj --> da1
         dmj --> da2
         dmj --> da3
@@ -102,16 +102,16 @@ node ActionExecutionControllerVMNode {
     }
 }
 
-plug ..> nhyif
+plug ..> bdomif
 
 node ServiceProviderVMNode1 {
   [NotificationBusinesseServicesAPI] as ap1
 }
 
 node ServiceProviderMainframeNode {
-  [PartnerBusinessServicesAPI] as ap2
+  [ClientBusinessServicesAPI] as ap2
   [AccountBusinessServicesAPI] as ap3
-  [CardBusinessServicesAPI] as ap4
+  [PortfolioBusinessServicesAPI] as ap4
 }
 
 da1 ..> ap2
