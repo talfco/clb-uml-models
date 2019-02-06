@@ -1,0 +1,125 @@
+@startuml
+
+node DynamicCaseMgmtVMNode1 {
+    [P21 - CIC Onboarding] as p21
+}
+
+node DynamicCaseMgmVMNode2 {
+    [MUY - WMO Onboarding] as muy
+}
+
+node PresentationServiceVMNode1 {
+    () cg9REST_IF as cg9if #red
+    [CG9 - Partner Presentation Services] as cg9
+    cg9if -- cg9
+}
+
+node PresentationServiceVMNode2 {
+    () kefREST_IF as kefif #red
+    [KEF - Partner Presentation Services] as kef
+    kefif -- kef
+}
+
+node SagaExecutionVMNode {
+    () bqnREST_IF as bqnif #red
+    note right of bqnif
+        Exposes on a per Saga Type a
+        JSON Data Structure (versioned)
+        Attribute types  can be mapped to the
+        BQN data dictionary. XSD definition which
+        is an extension of the OLB XSD definition
+    end note
+    folder "BQN Case App" {
+        [ BQN - SagaExecutionController] as bqn
+        note right of bqn
+            Will contain encapsulated BPM Model per
+            Saga Type. Responsible to build up the
+            canonical runtime model and enrich it with
+            meta data (BQN. May validate the Saga Interface
+            model to be compliant with XSD definitions
+        end note
+        [ BQN-BPM1 - "CICOnboardingSaga" ] as bqa1
+        [ BQN-BPM2 - "WMOOnboardingSaga" ] as bqa2
+        [ BQN-BPM3 - "MBBOProductSalesSaga" ] as bqa3
+        [ BQN-Plugin - "NHYActionExecutor"] as plug
+        [ BQN-Plugin - "DMJDirectActionExecutor"] as plug1
+        database sagaState
+        bqn --> bqa1
+        bqn --> bqa2
+        bqn --> bqa3
+        bqn --> plug
+        bqn --> plug1
+     }
+    bqnif -- bqn
+    sagaState - bqn
+    frame DMJLibrary as dml
+    note left of dml
+      read services to establish saga process context,
+      dedicated service providers (e.g. OLB, DocumentBasket)
+      may be connected directly via DMJLibrary based DMActions.
+    end note
+    plug1 --> dml
+}
+
+p21 ..> bqnif
+muy ..> bqnif
+cg9 ..> bqnif
+kef ..> bqnif
+
+node ActionExecutionControllerVMNode {
+    () nhyREST_IF as nhyif #red
+    [NHY - BusinessDomainActionExecContr] as nhy
+    note left of nhy
+      Will load a list of versioned business
+      domain actions delivered in versioned modules.
+      And exposes a REST action executor interface.
+      Can be evolved to horizontally scaling in case of rising
+      complexity.
+      May provide future support of sharding
+      to partition along saga type collections.
+    end note
+    nhyif -- nhy
+    folder "DMJ-Library" {
+        () dmjLIB_IF as dmjif
+        [DMJ - BuisnessDomainActionFramework] as dmj
+        note left of dmj
+          Domain specific actions are encapsulated in
+          well defined domain module scopes. Allowing
+          independent development per domain and module
+          testing. Framework provides standardized Mockup
+          support for automated testing.
+        end note
+        nhy --> dmjif
+        dmjif -- dmj
+        [DMJ-Partner-DActionsModule] as da1
+        [DMJ-Account-DActionsModule] as da2
+        [DMJ-Card-DActionsModule] as da3
+        [DMJ-Notifiation-DActionsModule] as da4
+        dmj --> da1
+        dmj --> da2
+        dmj --> da3
+        dmj --> da4
+    }
+}
+
+plug ..> nhyif
+
+node ServiceProviderVMNode1 {
+  [NotificationBusinesseServicesAPI] as ap1
+}
+
+node ServiceProviderMainframeNode {
+  [PartnerBusinessServicesAPI] as ap2
+  [AccountBusinessServicesAPI] as ap3
+  [CardBusinessServicesAPI] as ap4
+}
+
+da1 ..> ap2
+da2 ..> ap3
+da3 ..> ap4
+da4 ..> ap1
+
+
+
+
+@enduml
