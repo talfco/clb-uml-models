@@ -4,6 +4,7 @@ UML Models based on awesome PlantUML modeling tool:  [PlantUML Link](http://pl
 
 ## List of Domains
 
+* [Polkadot Diagrams](/models/polkadot/)
 * [Ethereum Diagrams](/models/ethereum/)
 
 
