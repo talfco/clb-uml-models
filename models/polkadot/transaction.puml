@@ -1,0 +1,34 @@
+@startuml
+actor client
+control rpc.AuthorAPI as rapi
+control transcation_pool.Pool as pol
+control consensus.Proposer as prop
+control Client.BlockBuilder as cl
+control BlockBuilderAPI as bapi
+control srml.Executive as exec
+control prim.Payment as pay
+control srml.Balances as bal
+entity srml.storage as stor
+
+client -> rapi: submit_extrinsic()
+activate rapi
+rapi -> pol: submit_at(block_id,xts)
+deactivate rapi
+    activate pol
+    pol -> exec: validate_transaction(blocki_id,xts)
+    note right
+     Check a given transaction for validity.
+     This doesn't execute any side-effects;
+     it merely checks whether the transaction
+     would panic if it were included or not.
+    end note
+
+        activate exec
+        exec -> exec: validate_signature()
+        exec -> exec: validate_nonce():expected_index
+        exec -> pay: make_payment(senderAddr,xts.len):OK
+        exec --> pol: Valid(priority, requires, provides,longevity)
+        deactivate exec
+    deactivate pol
+
+@enduml
