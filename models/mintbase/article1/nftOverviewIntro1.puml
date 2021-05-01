@@ -3,6 +3,8 @@
 
 hide empty members
 
+footer "Value Relationships" by cloudburo.net
+
 annotation Lucy <<Individual>> #red
 annotation PaperBasedCollectible <<PaniniSoccerCard>> #red
 

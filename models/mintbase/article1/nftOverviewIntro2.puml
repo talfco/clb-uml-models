@@ -3,6 +3,8 @@
 
 hide empty members
 
+footer "Control Relationships" by cloudburo.net
+
 annotation Lucy <<Individual>> #red
 annotation PaperBasedCollectible <<PaniniSoccerCard>> #red
 
@@ -20,25 +22,11 @@ package Blockchain <<Database>> {
      cryptoCurrencyAccounts
 
    }
-  class NFTContract {
-    bcContractAddress: PK1
-    tokenId: PK2
-    tokenHash: FK
-    tokenUri: FK
-    bcOwnerWalletAddress: FK
-  }
+
 
 }
 
-package DecentralizedFileStore <<Database>> {
-    class NonFungibleArtefact <<JPG Image>>  {
-        storageLocation = tokenHash
-    }
-}
 
-LucysWallet *-- NFTContract: controls
-NFTContract *- NonFungibleArtefact: tokenURI >
-NFTContract .left. DigitalCollectible: representedBy <
 Lucy -- DigitalCollectible: hasValueFor <
 Lucy - LucysWallet: controls >
 PaperBasedCollectible - Lucy: hasValueFor >

@@ -6,6 +6,7 @@ hide empty members
 annotation Lucy <<Individual>> #red
 annotation PaperBasedCollectible <<PaniniSoccerCard>> #red
 
+footer "NFT Contract Extended" by cloudburo.net
 
 annotation DigitalCollectible #red {
     name "51 Light Angel"
@@ -20,11 +21,25 @@ package Blockchain <<Database>> {
      cryptoCurrencyAccounts
 
    }
-
+  class NFTContract {
+    bcContractAddress: PK1
+    tokenId: PK2
+    tokenHash: FK
+    tokenUri: FK
+    bcOwnerWalletAddress: FK
+  }
 
 }
 
+package DecentralizedFileStore <<Database>> {
+    class NonFungibleArtefact <<JPG Image>>  {
+        storageLocation = tokenHash
+    }
+}
 
+LucysWallet *-- NFTContract: controls
+NFTContract *- NonFungibleArtefact: tokenURI >
+NFTContract .left. DigitalCollectible: representedBy <
 Lucy -- DigitalCollectible: hasValueFor <
 Lucy - LucysWallet: controls >
 PaperBasedCollectible - Lucy: hasValueFor >

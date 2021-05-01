@@ -6,6 +6,7 @@ hide empty members
 annotation Lucy <<Individual>> #red
 annotation PaperBasedCollectible <<PaniniSoccerCard>> #red
 
+footer "NFT Contract" by cloudburo.net
 
 annotation DigitalCollectible #red {
     name "51 Light Angel"

@@ -1,0 +1,21 @@
+@startuml
+autonumber
+
+footer "Wallet Signature Request" by cloudburo.net
+
+actor client
+box "Runs on User's Browser/Mobile/Desktop" #LightBlue
+boundary MintBaseUI
+control MetaMaskWallet
+end box
+box "Runs on Blockchain" #LightYellow
+entity MintBaseContractAddr #aqua
+end box
+
+MintBaseUI -> MetaMaskWallet: connect()
+MetaMaskWallet -> client: requestApproval
+client -> MetaMaskWallet: approveConnection()
+MetaMaskWallet -> MintBaseUI: sendInformation():clientAddr
+
+
+@enduml
