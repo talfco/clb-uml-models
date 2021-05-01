@@ -1,0 +1,25 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+hide empty members
+
+class DigitalArtifact
+class File <<Storable>> {
+ long: size
+ string: name
+ binary: content
+}
+class Fingerprint <<Hash>> {
+  string: uniqueId
+}
+class PDF_File <<Document>>
+class JPG_File <<Picture>>
+class MP4_File <<Movie>>
+
+DigitalArtifact --|> File
+File "1" *- "1" Fingerprint : caclulateViaCryptoHashFunction()
+File --|> PDF_File
+File --|> JPG_File
+File --|> MP4_File
+
+@enduml

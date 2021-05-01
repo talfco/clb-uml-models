@@ -1,0 +1,32 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+hide empty members
+
+annotation Lucy <<Individual>> #red
+annotation PaperBasedCollectible <<PaniniSoccerCard>> #red
+
+
+annotation DigitalCollectible #red {
+    name "51 Light Angel"
+    piece "5 of 129"
+}
+
+package Blockchain <<Database>> {
+  class LucysWallet {
+     bcWalletAddress: PK
+     privateWalletKey
+     publicWalletKey
+     cryptoCurrencyAccounts
+
+   }
+
+
+}
+
+
+Lucy -- DigitalCollectible: hasValueFor <
+Lucy - LucysWallet: controls >
+PaperBasedCollectible - Lucy: hasValueFor >
+PaperBasedCollectible - Lucy: owns <
+@enduml

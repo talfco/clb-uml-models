@@ -1,0 +1,74 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+hide empty members
+
+class MintBase_Thing
+
+class Ownable #bisque
+class Context #bisque
+
+class ERC721 #aqua
+class ERC721Full #aqua
+class ERC721Metadata #aqua
+class ERC721MetadataMintable #aqua
+class ERC721Burnable #aqua
+class ERC721Enumerable #aqua
+class MinterRole #aqua
+class ERC165 #aquamarine
+class ERC721 #aqua
+
+interface IERC721Metadata #aqua
+interface IERC721 #aqua
+interface IERC721Enumerable #aqua
+
+interface IERC165 #aquamarine
+
+
+Ownable --|> Context
+ERC721 --|> Context
+' ERC721Burnable --|> Context
+' ERC721Metadata --|> Context
+'ERC721Enumerable --|>  Context
+
+MinterRole  --|> Context
+
+ERC721Burnable --|> ERC721
+' ERC721MetadataMintable --|> ERC721
+' ERC721Full  --|> ERC721
+ERC721Metadata --|> ERC721
+ERC721Enumerable --|>  ERC721
+
+ERC721MetadataMintable --|> ERC721Metadata
+ERC721Full --|> ERC721Metadata
+
+ERC721Full --|> ERC721Enumerable
+
+ERC721MetadataMintable --|> MinterRole
+
+' ERC721Metadata --|> ERC165
+ERC721 --|> ERC165
+' ERC721Enumerable --|>  ERC165
+
+
+
+ERC721Metadata --|> IERC721Metadata
+
+ERC721 --|> IERC721
+IERC721Metadata --|>  IERC721
+IERC721Enumerable --|> IERC721
+
+ERC721Enumerable --|>  IERC721Enumerable
+
+
+
+IERC721 --|> IERC165
+
+ERC165 --|> IERC165
+
+MintBase_Thing --|> Ownable
+MintBase_Thing  --|> ERC721Full
+MintBase_Thing  --|> ERC721MetadataMintable
+MintBase_Thing  --|> ERC721Burnable
+
+@enduml

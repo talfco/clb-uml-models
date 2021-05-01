@@ -1,0 +1,40 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+hide empty members
+
+annotation Lucy <<Individual>> #red
+annotation PaperBasedCollectible <<PaniniSoccerCard>> #red
+
+
+annotation DigitalCollectible #red {
+    name "51 Light Angel"
+    piece "5 of 129"
+}
+
+package Blockchain <<Database>> {
+  class LucysWallet {
+     bcWalletAddress: PK
+     privateWalletKey
+     publicWalletKey
+     cryptoCurrencyAccounts
+
+   }
+  class NFTContract {
+    bcContractAddress: PK1
+    tokenId: PK2
+    tokenHash: FK
+    tokenUri: FK
+    bcOwnerWalletAddress: FK
+  }
+
+}
+
+
+LucysWallet *-- NFTContract: controls
+NFTContract .left. DigitalCollectible: representedBy <
+Lucy -- DigitalCollectible: hasValueFor <
+Lucy - LucysWallet: controls >
+PaperBasedCollectible - Lucy: hasValueFor >
+PaperBasedCollectible - Lucy: owns <
+@enduml

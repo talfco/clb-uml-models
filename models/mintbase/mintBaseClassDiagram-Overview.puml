@@ -1,0 +1,48 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+hide empty members
+
+annotation MintBase_Store #beige
+annotation EtheureumBlockchain #beige
+
+class MintBase_Thing
+
+
+
+class Ownable #bisque
+note bottom
+  Provides a basic access control mechanism,
+  where there is an account (an owner) that
+  can be granted exclusive access to specific
+  unctions.
+end note
+
+class ERC721Full #aqua
+note bottom
+    Full ERC721 Token Implementation.
+    Includes all the required
+    functionality of the ERC721 standard.
+end note
+
+class ERC721MetadataMintable #aqua
+note bottom
+    ERC721 minting logic with metadata.
+end note
+
+class ERC721Burnable #aqua
+note bottom
+    ERC721 Token that can be irreversibly
+    burned (destroyed).
+end note
+
+EtheureumBlockchain *- MintBase_Thing: stores
+
+MintBase_Store .. MintBase_Thing : instantiatedAs
+
+MintBase_Thing --|> Ownable
+MintBase_Thing  --|> ERC721Full
+MintBase_Thing  --|> ERC721MetadataMintable
+MintBase_Thing  --|> ERC721Burnable
+
+@enduml

@@ -1,0 +1,30 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+actor client
+boundary MintBaseUI
+control MetaMask
+
+entity MintBaseContractAddr #aqua
+entity MyStoreContractAddr #red
+entity OwnableModule #green
+
+MintBaseUI -> MetaMask: connect()
+MetaMask -> client: requestApproval
+client -> MetaMask: approveConnection()
+MetaMask -> MintBaseUI: sendInformation():clientAddr
+
+client -> MintBaseUI: createStore()
+MintBaseUI -> MintBaseContractAddr: _create_0_1(clientAddr, tokenSymbol)
+
+MintBaseContractAddr -> MyStoreContractAddr: createContract(clientAddr, tokenSymbol)
+activate MyStoreContractAddr
+MyStoreContractAddr -> OwnableModule: transferOwnership(0,MintBaseContractAddr)
+MyStoreContractAddr -> OwnableModule: transferOwnership(MintBaseContractAddr,clientAddr)
+MyStoreContractAddr -> MyStoreContractAddr: _addMinter(0,MintBaseContractAddr)
+MyStoreContractAddr -> MyStoreContractAddr: _addMinter(0,clientAddr)
+deactivate MyStoreContractAddr
+
+@enduml
