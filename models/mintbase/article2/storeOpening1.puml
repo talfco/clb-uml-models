@@ -3,19 +3,29 @@ autonumber
 
 footer "Wallet Signature Request" by cloudburo.net
 
-actor client
-box "Runs on User's Browser/Mobile/Desktop" #LightBlue
-boundary MintBaseUI
-control MetaMaskWallet
+actor user 
+box "Runs on User's Browser" #LightBlue
+boundary Browser as mbui #LightSkyBlue
+control MetaMaskWallet as mmw #LightSkyBlue
 end box
-box "Runs on Blockchain" #LightYellow
-entity MintBaseContractAddr #aqua
+box "Runs on Web 2.0"
+entity MintBaseWebsite as website #LightGrey
+end box
+box "Runs on Web 3.0 (Blockchain)" #LightYellow
+entity MintBaseContract
 end box
 
-MintBaseUI -> MetaMaskWallet: connect()
-MetaMaskWallet -> client: requestApproval
-client -> MetaMaskWallet: approveConnection()
-MetaMaskWallet -> MintBaseUI: sendInformation():clientAddr
-
+user -> mbui: openWebsite(url)
+mbui -> website: fetchMintBaseApp(url)
+user -> mbui: createNewStore()
+mbui -> mmw: sendMsgToSign(msg)
+mbui -> user: requestForWalletSignature
+user -> mmw: login(password)
+mmw -> user: askToApproveSignatureRequestForMintBase()
+user -> mmw: approve()
+mmw -> mmw: signMsg(privateKey, msg)
+mmw -> mbui: sendSignedMsg(publicKey, msg)
+mbui -> mbui: extractAndVerifyMsg(publicKey,msg):OK
+mbui -> user: requestNFTStoreOpeningData
 
 @enduml
