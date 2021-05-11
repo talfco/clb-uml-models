@@ -1,0 +1,38 @@
+@startuml
+footer "Browser Concepts" by cloudburo.net
+
+hide empty members
+
+class "Personal Device" as dv <<Laptop>>
+class "Chrome Browser" as bw
+class "BrowserExtension" as be
+class "Website Url" as tab <<BrowserTab>>
+class "Metamask Wallet" as wal <<dApp>>
+class "Mintbase.io" as dapp <<dApp>>
+
+package "Local Browser Store" <<Database>> {
+entity "Metamask Store" as mes {
+    String bcWalletAddress
+    String publicKey
+    String privateKey
+    String walletSeed
+}
+entity "Mintbase Store" as mis
+}
+
+dv *--> bw : hasInstalled
+
+bw *--> be :hasInstalled
+bw *--> tab :hasOpened
+
+be <|-- wal :ofType
+tab <|-- dapp: ofType
+
+wal -> dapp :1-injects API endpoint
+wal <-> dapp :2-interact
+
+wal --> mes
+dapp --> mis
+
+
+@enduml
